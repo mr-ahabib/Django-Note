@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Simple Note Taking App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 28px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap; /* Responsive */
+        }
+        .buttons button {
+            padding: 10px 20px;
+            background-color: white;
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .buttons button:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .container {
+            padding: 50px 20px;
+            text-align: center;
+        }
+        .container h2 {
+            font-size: 32px;
+            color: #333;
+        }
+        .container p {
+            font-size: 18px;
+            color: #666;
+        }
+        .about {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .about h3 {
+            font-size: 28px;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        .about p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border: 1px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 90%; /* Responsive */
+            max-width: 400px;
+            text-align: center;
+        }
+        .popup h3 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #4CAF50;
+        }
+        .popup input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .popup button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .popup button:hover {
+            background-color: #45a049;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        @media (max-width: 768px) {
+            header {
+                font-size: 24px;
+                padding: 15px 0;
+            }
+            .container h2 {
+                font-size: 28px;
+            }
+            .container p {
+                font-size: 16px;
+            }
+            .about h3 {
+                font-size: 24px;
+            }
+            .about p {
+                font-size: 14px;
+            }
+            .popup h3 {
+                font-size: 20px;
+            }
+            .popup input {
+                font-size: 14px;
+            }
+            .popup button {
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 480px) {
+            header {
+                font-size: 20px;
+                padding: 10px 0;
+            }
+            .container h2 {
+                font-size: 24px;
+            }
+            .container p {
+                font-size: 14px;
+            }
+            .about h3 {
+                font-size: 20px;
+            }
+            .about p {
+                font-size: 12px;
+            }
+            .popup h3 {
+                font-size: 18px;
+            }
+            .popup input {
+                font-size: 12px;
+            }
+            .popup button {
+                font-size: 12px;
+            }
+            .buttons button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>Your Simple Note Taking App</header>
+    <div class="buttons">
+        <button onclick="openPopup('signin')">Sign In</button>
+        <button onclick="openPopup('signup')">Sign Up</button>
+    </div>
+    <div class="container">
+        <h2>Welcome to Your Simple Note Taking App</h2>
+        <p>Easily create, edit, and manage your notes.</p>
+        <div class="about">
+            <h3>About This App</h3>
+            <p>This note-taking app is designed to help you stay organized and keep track of your thoughts and ideas. Whether you're a student, a professional, or just someone who loves to jot down notes, this app provides a simple and efficient way to manage your notes.</p>
+            <p>Features:</p>
+            <ul>
+                <li>Create and edit notes easily</li>
+                <li>Organize your notes by categories</li>
+                <li>Search functionality to find your notes quickly</li>
+                <li>Secure sign-in to keep your notes private</li>
+            </ul>
+            <p>Get started by signing up or signing in, and enjoy the convenience of having all your notes in one place.</p>
+        </div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="signin-popup">
+        <h3>Sign In</h3>
+        <form method="post" action="{% url 'index' %}">
+            {% csrf_token %}
+            <input type="email" name="signin-email" placeholder="Email">
+            <input type="password" name="signin-password" placeholder="Password">
+            <button type="submit" name="signin">Submit</button>
+        </form>
+    </div>
+    <div class="popup" id="signup-popup">
+        <h3>Sign Up</h3>
+        <form method="post" action="{% url 'index' %}">
+            {% csrf_token %}
+            <input type="text" name="signup-username" placeholder="Username">
+            <input type="email" name="signup-email" placeholder="Email">
+            <input type="password" name="signup-password" placeholder="Password">
+            <button type="submit" name="signup">Submit</button>
+        </form>
+    </div>
+    <script>
+        function openPopup(popupType) {
+            document.getElementById('overlay').style.display = 'block';
+            if (popupType === 'signin') {
+                document.getElementById('signin-popup').style.display = 'block';
+            } else if (popupType === 'signup') {
+                document.getElementById('signup-popup').style.display = 'block';
+            }
+        }
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('signin-popup').style.display = 'none';
+            document.getElementById('signup-popup').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

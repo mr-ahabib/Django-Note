@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logout-button {
+            background-color: white;
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .logout-button:hover {
+            background-color: #45a049;
+            color: white;
+        }
+        .email {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 300px; /* Responsive width */
+            height: auto; /* Auto height */
+            margin: 10px;
+            padding: 20px;
+            text-align: left;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+            overflow: hidden; /* Truncate overflowing text */
+        }
+        .card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .card h3 {
+            font-size: 20px;
+            color: #4CAF50;
+            margin: 0 0 10px 0;
+            overflow: hidden; /* Truncate overflowing text */
+            white-space: nowrap; /* Prevent text wrapping */
+            text-overflow: ellipsis; /* Show ellipsis for overflow */
+        }
+        .card p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            overflow: hidden; /* Truncate overflowing text */
+            text-overflow: ellipsis; /* Show ellipsis for overflow */
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* Limit the text to 3 lines */
+            -webkit-box-orient: vertical;
+        }
+        .popup, .edit-popup, .create-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px; /* Responsive padding */
+            border: 1px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 90%; /* Responsive width */
+            max-width: 800px; /* Max width for larger screens */
+            text-align: center;
+        }
+        .popup h3, .edit-popup h3, .create-popup h3 {
+            margin-top: 0;
+            font-size: 24px; /* Responsive font size */
+            color: #4CAF50;
+        }
+        .popup p, .edit-popup p, .create-popup p {
+            font-size: 16px; /* Responsive font size */
+            color: #666;
+            line-height: 1.6;
+            word-wrap: break-word; /* Allow long words to break */
+        }
+        .popup button, .edit-popup button, .create-popup button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px; /* Responsive button text */
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        .popup button:hover, .edit-popup button:hover, .create-popup button:hover {
+            background-color: #45a049;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .button-container button {
+            background-color: white;
+            color: #4CAF50;
+            border: 2px solid #4CAF50;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .button-container button:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .edit-popup input, .edit-popup textarea, .create-popup input, .create-popup textarea {
+            width: 100%;
+            padding: 10px; /* Responsive padding */
+            margin: 10px 0; /* Responsive margin */
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px; /* Responsive font size */
+        }
+        @media (min-width: 768px) {
+            header {
+                font-size: 24px;
+            }
+            .card {
+                width: 45%; /* Two cards per row */
+            }
+            .card h3 {
+                font-size: 24px;
+            }
+            .card p {
+                font-size: 16px;
+            }
+        }
+        @media (min-width: 1024px) {
+            header {
+                font-size: 28px;
+            }
+            .card {
+                width: 30%; /* Three cards per row */
+            }
+            .card h3 {
+                font-size: 28px;
+            }
+            .card p {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <span>Dashboard</span>
+        <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </header>
+    <div class="email">{{ email }}</div>
+    <div class="button-container">
+        <button id="createNoteButton">Create Note</button>
+    </div>
+    <div class="container">
+        {% for note in notes %}
+        <div class="card" onclick="openPopup('{{ note.title }}', '{{ note.content|escapejs }}', '{{ note.id }}')">
+            <h3>{{ note.title }}</h3>
+            <p>{{ note.content }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="view-popup">
+        <h3 id="view-title"></h3>
+        <p id="view-content"></p>
+        <div class="button-container">
+            <button id="editButton">Edit</button>
+            <button id="deleteButton">Delete</button>
+        </div>
+    </div>
+    <div class="edit-popup" id="edit-popup">
+        <h3>Edit Note</h3>
+        <form id="editForm" method="post" action="{% url 'dashboard' %}">
+            {% csrf_token %}
+            <input type="hidden" name="note-id" id="edit-id">
+            <input type="text" name="note-title" id="edit-title" placeholder="Title">
+            <textarea name="note-content" id="edit-content" placeholder="Content"></textarea>
+            <button type="submit" id="saveButton">Save</button>
+        </form>
+    </div>
+    <div class="create-popup" id="create-popup">
+        <h3>Create New Note</h3>
+        <form id="createForm" method="post" action="{% url 'dashboard' %}">
+            {% csrf_token %}
+            <input type="text" name="note-title" placeholder="Title">
+            <textarea name="note-content" placeholder="Content"></textarea>
+            <button type="submit" id="createButton">Create</button>
+        </form>
+    </div>
+    <script>
+        window.onload = function() {
+            document.getElementById('overlay').addEventListener('click', function() {
+                hidePopups();
+            });
+
+            document.getElementById('createNoteButton').addEventListener('click', function() {
+                hidePopups();
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('create-popup').style.display = 'block';
+            });
+
+            document.getElementById('editButton').addEventListener('click', function() {
+                hidePopups();
+                document.getElementById('view-popup').style.display = 'none';
+                document.getElementById('edit-popup').style.display = 'block';
+                document.getElementById('edit-title').value = document.getElementById('view-title').textContent;
+                document.getElementById('edit-content').value = document.getElementById('view-content').innerHTML.replace(/<br\s*[\/]?>/gi, "\n");
+            });
+
+            document.getElementById('deleteButton').addEventListener('click', function() {
+                const noteId = document.getElementById('edit-id').value;
+                fetch(`/delete_note/${noteId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload(); // Reload the page after successful deletion
+                    }
+                });
+            });
+
+            document.getElementById('editForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                document.getElementById('saveButton').disabled = true; // Disable save button
+                // Perform form submission
+                fetch(this.action, {
+                    method: this.method,
+                    body: new FormData(this),
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Note updated successfully');
+                        window.location.reload(); // Reload the page after successful update
+                    } else {
+                        console.error('Failed to update note');
+                    }
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                })
+                .finally(() => {
+                    document.getElementById('saveButton').disabled = false; // Re-enable save button
+                });
+            });
+
+            document.getElementById('createForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                document.getElementById('createButton').disabled = true; // Disable create button
+                // Perform form submission
+                fetch(this.action, {
+                    method: this.method,
+                    body: new FormData(this),
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Note created successfully');
+                        window.location.reload(); // Reload the page after successful creation
+                    } else {
+                        console.error('Failed to create note');
+                    }
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                })
+                .finally(() => {
+                    document.getElementById('createButton').disabled = false; // Re-enable create button
+                });
+            });
+        };
+
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        function openPopup(title, content, id) {
+            hidePopups();
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('view-popup').style.display = 'block';
+            document.getElementById('view-title').textContent = title;
+            document.getElementById('view-content').innerHTML = content.replace(/\n/g, '<br>');
+            document.getElementById('edit-id').value = id;
+        }
+
+        function hidePopups() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('view-popup').style.display = 'none';
+            document.getElementById('edit-popup').style.display = 'none';
+            document.getElementById('create-popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
